@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CatchUp</title>
+<style>
+:root{--bg:#f4f5fb;--card:#fff;--tx:#161a2b;--mu:#6b7280;--bd:#e5e7f0;--ac:#6366f1;--hi:#ef4444;--md:#f59e0b;--lo:#94a3b8;--mk:#fde68a;--sh:0 8px 30px rgba(79,70,229,.10);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0d1a;--card:#14172a;--tx:#eceefa;--mu:#9aa3bd;--bd:#262b47;--mk:#7a5a14;--ac:#818cf8;--sh:0 8px 30px rgba(0,0,0,.4)}}
+:root[data-theme="dark"]{--bg:#0b0d1a;--card:#14172a;--tx:#eceefa;--mu:#9aa3bd;--bd:#262b47;--mk:#7a5a14;--ac:#818cf8;--sh:0 8px 30px rgba(0,0,0,.4)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;color:var(--tx);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(900px 420px at 5% -10%,#6366f12e,transparent),radial-gradient(700px 420px at 100% 0,#ec48992e,transparent),var(--bg);background-attachment:fixed}
+.w{max-width:960px;margin:0 auto;padding:20px 16px 56px}
+.hero{position:relative;overflow:hidden;color:#fff;border-radius:24px;padding:28px 24px;margin-bottom:18px;background:linear-gradient(135deg,#4f46e5,#7c3aed 55%,#ec4899);box-shadow:var(--sh)}
+.hero:after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:#ffffff1f}
+.hero:before{content:"";position:absolute;right:70px;bottom:-90px;width:160px;height:160px;border-radius:50%;background:#ffffff14}
+.logo{width:48px;height:48px;border-radius:15px;background:#ffffff2e;display:grid;place-items:center;font-size:26px;margin-bottom:12px}
+h1{margin:0;font-size:36px;letter-spacing:-.5px;line-height:1.1}
+.hero .sub{margin:8px 0 14px;color:#ffffffe6;font-size:16px;max-width:520px}
+.pv{display:inline-block;background:#ffffff29;border:1px solid #ffffff40;color:#fff;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;position:relative;z-index:1}
+h2{font-size:17px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:var(--sh)}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#res .card{animation:up .45s ease both}
+#res .card:nth-child(2){animation-delay:.05s}#res .card:nth-child(3){animation-delay:.1s}#res .card:nth-child(4){animation-delay:.15s}
+textarea{width:100%;height:210px;border:1.5px solid var(--bd);border-radius:14px;padding:12px;background:var(--bg);color:var(--tx);font:13px/1.45 ui-monospace,Menlo,monospace;resize:vertical;outline:none;transition:.2s}
+input{border:1.5px solid var(--bd);border-radius:999px;padding:10px 16px;background:var(--bg);color:var(--tx);font:inherit;min-width:0;flex:1;outline:none;transition:.2s}
+textarea:focus,input:focus{border-color:var(--ac);box-shadow:0 0 0 4px #6366f128}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+button{border:1.5px solid var(--bd);background:var(--card);color:var(--tx);border-radius:999px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;transition:.2s}
+button:hover{transform:translateY(-1px);border-color:var(--ac)}
+button.p{background:linear-gradient(90deg,#4f46e5,#ec4899);color:#fff;border-color:transparent;box-shadow:0 6px 16px #6366f14d}
+.ok{color:#16a34a;font-size:13px;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0}
+.st{background:color-mix(in srgb,var(--c) 12%,var(--card));border:1px solid color-mix(in srgb,var(--c) 30%,transparent);border-radius:16px;padding:12px 14px}
+.st i{font-style:normal;font-size:18px}.st b{display:block;font-size:32px;line-height:1.1;color:var(--c)}.st span{font-size:12px;color:var(--mu);font-weight:600}
+.chips span{display:inline-block;background:var(--bg);border:1px solid var(--bd);border-radius:999px;padding:3px 12px;margin:3px 5px 3px 0;font-size:12.5px;font-weight:600}
+.it{display:flex;gap:12px;padding:12px;margin:10px 0;border:1px solid var(--bd);border-left:5px solid var(--lo);border-radius:14px;background:var(--bg)}
+.it.L-High{border-left-color:var(--hi)}.it.L-Medium{border-left-color:var(--md)}
+.av{flex:none;width:38px;height:38px;border-radius:50%;color:#fff;display:grid;place-items:center;font-weight:700}
+.bd2{min-width:0;flex:1}.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tx{margin:4px 0;overflow-wrap:anywhere}
+.b{margin-left:auto;font-size:11px;font-weight:700;color:#fff;border-radius:999px;padding:2px 10px}
+.High{background:var(--hi)}.Medium{background:var(--md)}.Low{background:var(--lo)}
+.meta{font-size:12px;color:var(--mu)}
+.tg span{display:inline-block;font-size:11px;font-weight:600;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);padding:2px 9px;border-radius:999px;margin:2px 6px 0 0}
+mark{background:var(--mk);color:inherit;border-radius:4px;padding:0 3px}
+.empty{color:var(--mu);font-size:14px;padding:6px 0}
+pre{white-space:pre-wrap;font:inherit;margin:0}
+#res{display:none}
+@media (max-width:520px){h1{font-size:30px}.hero{padding:22px 18px}}
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="hero"><div class="logo">⚡</div><h1>CatchUp</h1><p class="sub">Miss nothing. Read less. Your group chats, boiled down to what actually matters.</p><span class="pv">🔒 100% on-device · your chat never leaves this browser</span></div>
+
+  <div class="card">
+    <textarea id="in" placeholder="Paste a WhatsApp export or any 'Name: message' chat here..."></textarea>
+    <div class="row">
+      <input id="me" placeholder="Your name(s), comma separated (e.g. Arjun, AJ)">
+      <button class="p" id="go">Analyze</button>
+      <button id="smp">Load sample</button>
+    </div>
+  </div>
+
+  <div id="res">
+    <div class="card"><h2>⚡ TL;DR</h2><div id="tl"></div><div class="stats" id="st"></div><div class="chips" id="tp"></div><div class="row"><button class="p" id="cp">📋 Copy as to-do list</button><span class="ok" id="cpm"></span></div></div>
+    <div class="card"><h2>❓ Waiting for your reply</h2><div id="s-q"></div></div>
+    <div class="card"><h2>🎯 Needs your attention</h2><div id="s-you"></div></div>
+    <div class="card"><h2>⏰ Deadlines &amp; dates</h2><div id="s-dl"></div></div>
+    <div class="card"><h2>✅ Action items</h2><div id="s-ac"></div></div>
+    <div class="card"><h2>🧭 Decisions</h2><div id="s-de"></div></div>
+    <div class="card"><h2>📊 All messages by priority</h2><div id="s-all"></div><div class="row"><button id="more">Show more</button></div></div>
+    <div class="card"><h2>🤖 On-device AI summary (optional)</h2>
+      <div class="meta">Uses Chrome's built-in Gemini Nano if available. Runs fully on your machine.</div>
+      <div class="row"><button id="ai">Generate AI summary</button></div><pre id="aio" style="margin-top:10px"></pre></div>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const MON='jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec';
+const DATE=new RegExp('\\b(today|tonight|tomorrow|tmrw|eod|eow|end of (?:the )?(?:day|week)|(?:by|before|on|till|until)\\s+(?:mon|tues?|wed(?:nes)?|thu(?:rs)?|fri|sat(?:ur)?|sun)(?:day)?|\\d{1,2}(?::\\d{2})?\\s?(?:am|pm)|\\d{1,2}(?:st|nd|rd|th)?\\s+(?:'+MON+')[a-z]*|(?:'+MON+')[a-z]*\\s+\\d{1,2}(?:st|nd|rd|th)?|\\d{1,2}[\\/\\-]\\d{1,2}(?:[\\/\\-]\\d{2,4})?)\\b','gi');
+const URG=/\b(urgent|asap|immediately|important|critical|deadline|last date|final|mandatory|must|priority|emergency)\b|!{2,}/i;
+const ACT=/\b(please|pls|need to|needs to|have to|submit|bring|send|share|prepare|complete|finish|upload|register|fill|make sure|don'?t forget|remember to|can you|could you|will you|todo|to-do|assigned?|take care|update)\b/i;
+const DEC=/\b(decided|finali[sz]ed|confirmed|agreed|approved|cancel+ed|postponed|resched\w+|shifted|moved to|we will go|let'?s go with|selected|chosen)\b/i;
+const NOISE=/<media omitted>|image omitted|this message was deleted|joined using|left$|changed the group/i;
+const STOP=new Set('the a an and or to of in on for is are was were be it this that with at by from as we you i me my our your so if but not have has had will can just ok okay yes no do did done get got all pls please also then there what when how who which they them their been going like one any more some out up about hi hello hey guys'.split(' '));
+const WA=/^\[?(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}),?\s+(\d{1,2}:\d{2}(?::\d{2})?\s?(?:[ap]\.?m\.?)?)\]?\s*[-–]?\s*([^:]+?):\s*(.*)$/i;
+
+function parse(raw){
+  const out=[];
+  for(const line of raw.split(/\r?\n/)){
+    const l=line.replace(/[\u200e\u200f]/g,'').trim(); if(!l) continue;
+    let m=l.match(WA);
+    if(m){out.push({d:m[1],t:m[2],who:m[3].trim(),text:m[4]});continue}
+    m=l.match(/^([A-Za-z][^:]{0,24}):\s+(.+)$/);
+    if(m&&!/^https?$/i.test(m[1])){out.push({d:'',t:'',who:m[1].trim(),text:m[2]});continue}
+    if(out.length) out[out.length-1].text+=' '+l;
+  }
+  return out;
+}
+
+function score(m,names){
+  const x=m.text, tags=[]; let s=0;
+  if(NOISE.test(x)) return {s:-5,tags,dates:[]};
+  const mine=names.some(n=>m.who.toLowerCase()===n.toLowerCase());
+  const mention=!mine&&names.some(n=>new RegExp('\\b'+reEsc(n)+'\\b','i').test(x));
+  const everyone=/@(all|everyone|channel|here)\b/i.test(x);
+  if(mention){s+=3;tags.push('mentions you')} else if(everyone){s+=1;tags.push('@everyone')}
+  const dates=x.match(DATE)||[];
+  if(dates.length){s+=2;tags.push('deadline')}
+  if(URG.test(x)){s+=2;tags.push('urgent')}
+  const act=ACT.test(x); if(act){s+=2;tags.push('action')}
+  if(DEC.test(x)){s+=2;tags.push('decision')}
+  if(mention&&act){s+=2;tags.push('assigned to you')}
+  if(mention&&/\?/.test(x)) s+=1;
+  if(x.split(/\s+/).length<4) s-=2;
+  if(mine) s-=3;
+  return {s,tags,dates};
+}
+const lvl=s=>s>=6?'High':s>=3?'Medium':'Low';
+
+let ranked=[],shown=10,todo='';
+function hl(t){return esc(t).replace(DATE,m=>'<mark>'+m+'</mark>')}
+function av(n){let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))%360;return '<div class="av" style="background:hsl('+h+' 62% 48%)">'+esc(n.trim().charAt(0).toUpperCase())+'</div>'}
+function card(m){
+  return '<div class="it L-'+lvl(m.s)+'">'+av(m.who)+'<div class="bd2"><div class="top"><b>'+esc(m.who)+'</b><span class="meta">'+(m.d?esc(m.d)+' '+esc(m.t):'')+'</span><span class="b '+lvl(m.s)+'">'+lvl(m.s)+'</span></div><div class="tx">'+hl(m.text)+'</div><div class="tg">'+m.tags.map(t=>'<span>'+t+'</span>').join('')+'</div></div></div>';
+}
+function fill(id,list,empty){$(id).innerHTML=list.length?list.map(card).join(''):'<div class="empty">'+empty+'</div>'}
+
+function analyze(){
+  const raw=$('in').value.trim(); if(!raw){alert('Paste a chat first');return}
+  const names=$('me').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const msgs=parse(raw);
+  if(!msgs.length){alert('Could not read any messages. Use "Name: message" per line.');return}
+  ranked=msgs.map(m=>Object.assign(m,score(m,names)));
+  const by=t=>ranked.filter(m=>m.tags.includes(t)).sort((a,b)=>b.s-a.s);
+  const you=ranked.filter(m=>m.tags.includes('mentions you')||m.tags.includes('assigned to you')).sort((a,b)=>b.s-a.s);
+  const dl=by('deadline'),ac=by('action'),de=by('decision');
+  const isMine=m=>names.some(n=>m.who.toLowerCase()===n.toLowerCase());
+  const qs=msgs.map((m,i)=>({m,i})).filter(o=>o.m.tags.includes('mentions you')&&/\?/.test(o.m.text)&&!msgs.slice(o.i+1,o.i+5).some(isMine)).map(o=>o.m);
+  const people={};msgs.forEach(m=>people[m.who]=(people[m.who]||0)+1);
+  const top=Object.entries(people).sort((a,b)=>b[1]-a[1]);
+  const freq={};
+  msgs.forEach(m=>(m.text.toLowerCase().match(/[a-z]{4,}/g)||[]).forEach(w=>{if(!STOP.has(w))freq[w]=(freq[w]||0)+1}));
+  const topics=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8).map(e=>e[0]);
+  const span=(msgs[0].d&&msgs[msgs.length-1].d)?' between '+esc(msgs[0].d)+' and '+esc(msgs[msgs.length-1].d):'';
+  const highs=ranked.filter(m=>m.s>=6).sort((a,b)=>b.s-a.s).slice(0,3);
+  $('tl').innerHTML='<p><b>'+msgs.length+' messages</b> from <b>'+top.length+' people</b>'+span+'. Most active: '+esc(top.slice(0,3).map(p=>p[0]).join(', '))+'.'+(highs.length?' Top priorities: '+highs.map(h=>'“'+esc(h.text.length>70?h.text.slice(0,70)+'…':h.text)+'”').join(' • '):'')+'</p>';
+  $('st').innerHTML=[[you.length,'for you','🎯','#6366f1'],[dl.length,'deadlines','⏰','#f59e0b'],[ac.length,'actions','✅','#16a34a'],[de.length,'decisions','🧭','#0891b2'],[ranked.filter(m=>m.s>=6).length,'high priority','🔥','#ef4444']].map(a=>'<div class="st" style="--c:'+a[3]+'"><i>'+a[2]+'</i><b>'+a[0]+'</b><span>'+a[1]+'</span></div>').join('');
+  $('tp').innerHTML=topics.map(t=>'<span>'+esc(t)+'</span>').join('');
+  fill('s-q',qs,names.length?'No open questions for you. 🎉':'Enter your name above to catch questions.');
+  fill('s-you',you,names.length?'Nothing directly addressed to you.':'Enter your name above to catch mentions.');
+  fill('s-dl',dl,'No deadlines found.');
+  fill('s-ac',ac,'No action items found.');
+  fill('s-de',de,'No decisions found.');
+  ranked=ranked.slice().sort((a,b)=>b.s-a.s); shown=10; renderAll();
+  todo=ranked.filter(m=>m.s>=3&&(m.tags.includes('action')||m.tags.includes('deadline'))&&!isMine(m)).map(m=>'- [ ] '+m.text+' ('+m.who+(m.dates&&m.dates.length?', when: '+m.dates.join(' / '):'')+')').join('\n');
+  $('cpm').textContent='';
+  $('res').style.display='block'; $('res').scrollIntoView({behavior:'smooth'});
+}
+function renderAll(){
+  $('s-all').innerHTML=ranked.slice(0,shown).map(card).join('');
+  $('more').style.display=shown>=ranked.length?'none':'';
+}
+
+async function ai(){
+  const o=$('aio'); o.textContent='Working…';
+  try{
+    if(!('LanguageModel' in self)) throw new Error('na');
+    const s=await LanguageModel.create();
+    o.textContent=await s.prompt('Summarize this chat in 5 short bullets, then list action items and deadlines. Chat:\n'+$('in').value.slice(0,6000));
+  }catch(e){
+    o.textContent='On-device Gemini Nano is not available in this browser. In desktop Chrome, enable chrome://flags/#prompt-api-for-gemini-nano and retry. The rule-based analysis above works fully offline either way.';
+  }
+}
+
+const SAMPLE=`12/10/26, 9:02 am - Priya: Good morning team! Hackathon prep thread
+12/10/26, 9:05 am - Rahul: lol
+12/10/26, 9:10 am - Priya: @Arjun please submit the team registration form by Friday 5pm, it is mandatory!!
+12/10/26, 9:12 am - Rahul: <Media omitted>
+12/10/26, 9:30 am - Sneha: Anyone up for chai?
+12/10/26, 10:01 am - Priya: Venue has been shifted to Lab 3, confirmed by the organisers
+12/10/26, 10:15 am - Rahul: ok
+12/10/26, 11:40 am - Sneha: Arjun can you prepare the demo slides before 14th Oct? We need them for the rehearsal
+12/10/26, 12:05 pm - Rahul: Decided: we will go with the Flask backend, not Node
+12/10/26, 12:30 pm - Priya: Don't forget to bring your laptop chargers and ID cards tomorrow
+12/10/26, 1:00 pm - Sneha: haha nice
+12/10/26, 2:15 pm - Priya: URGENT: mentor review moved to tomorrow 10am, everyone must be there
+12/10/26, 2:20 pm - Arjun: ok will check
+12/10/26, 3:00 pm - Rahul: Arjun did you push the latest code to the repo?
+12/10/26, 3:45 pm - Sneha: Pizza after the review? 🍕
+12/10/26, 4:10 pm - Priya: Final submission portal closes on 15 Oct at 11:59 pm, upload the repo link and a demo video
+12/10/26, 4:30 pm - Rahul: cool`;
+$('go').onclick=analyze;
+$('smp').onclick=()=>{$('in').value=SAMPLE;$('me').value='Arjun'};
+$('more').onclick=()=>{shown+=10;renderAll()};
+$('ai').onclick=ai;
+$('cp').onclick=async()=>{const t='To-do from chat:\n'+todo;let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{ok=document.execCommand('copy')}catch(e2){}a.remove()}$('cpm').textContent=ok?'Copied! Paste it anywhere.':'Copy failed. Try again.'};
+</script>
+</body>
+</html>
